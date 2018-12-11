@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+
+platform   = `uname -sm`
+input_args = "#{ARGV.join(' ')}"
+
+dir = case platform
+      when /^Darwin/    ; "darwin-amd64"
+      when /^Linux.*64/ ; "linux-amd64"
+      else
+        abort "rspec_jit is not supported on your platform"
+      end
+
+puts "Starting Script"
+
+cmd = <<SCRIPT
+#!/bin/sh
+
+# Run RSpec with ruby JIT enabled
+
+ensure_binary_exists () {
+  which $1 2>/dev/null
+
+  if [ $? -eq 1  ]
+  then
+    echo "Please install $1"
+    exit 1
+  fi
+}
+
+get_ruby_version () {
+  ruby_version=$( ruby -v | awk -F' ' '{ print $2 }' )
+}
+
+ruby_supports_jit () {
+  jit_capable=$( echo $ruby_version | awk -F"." '{ if($1 == 2 && $2 > 5) { print "1" } }' )
+}
+
+ensure_binary_exists "rspec"
+ensure_binary_exists "ruby"
+
+get_ruby_version
+ruby_supports_jit
+
+if [[ $jit_capable == "1" ]]
+then
+  echo "Running with JIT using ruby version $ruby_version"
+  cmd="ruby --jit $(which rspec) #{input_args}"
+else
+  echo "Running without JIT enabled. Ruby $ruby_version does not support jit"
+  cmd="rspec #{input_args}"
+fi
+echo $cmd
+$cmd
+SCRIPT
+
+exec cmd
