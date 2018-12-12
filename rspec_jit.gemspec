@@ -13,13 +13,12 @@ Gem::Specification.new do |s|
   s.email       = 'hello@jasonwillems.com'
   s.homepage    = 'https://github.com/at1as/rspec_jit'
   s.license     = 'MIT'
-  s.files       = ["bin/rspec_jit"] # , "bin/rspec_jit.sh"]
+  s.files       = ["bin/rspec_jit"]
   s.executables = ["rspec_jit"]
 
   # This requires a *nix operating system
   s.platform    = "ruby"
 
-  #s.require_paths = ["lib"]
   s.add_runtime_dependency "rspec", '~> 3'
   s.add_runtime_dependency "rspec-core", '~> 3'
 end

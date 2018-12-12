@@ -2,6 +2,13 @@
 
 Ruby 2.6 added an experimental Just In Time compiler. It is disabled by default, but can be enabled by providing the `--jit` flag to the Ruby executable.
 
+### Installation
+
+rpsec_jit is published as a [gem](https://rubygems.org/gems/rspec_jit)
+
+```
+gem install rspec_jit
+```
 
 ### Motivation
 
@@ -30,7 +37,7 @@ $ ruby --jit -Ilib -Ispec -rrspec/autorun spec/test_file_spec.rb
 
 This allows us to force enable/disable the JIT by providing or omitting the flag from Ruby
 
-This is rather cluncky, and an easier way would be desirable.
+This is rather clunky, and an easier way would be desirable.
 
 ### Verifying the JIT is actually enabled
 
@@ -43,7 +50,7 @@ require 'rspec'
 
 RSpec.describe RubyVM::MJIT do
   it "mjit should be enabled" do
-    expect(RubyVM::MJIT.enabled?).to eq(true)
+    expect(defined?(RubyVM::MJIT) && RubyVM::MJIT.enabled?).to eq(true)
   end
 end
 
@@ -51,7 +58,15 @@ end
 
 ### Gotchas
 
-At this stage, This is purely an experimental endevour. RSpec is not currently designed to make use of the JIT.
+At this stage, This is purely an experimental endeavor. RSpec is not currently designed to make use of the JIT.
 
 Its codebase will likely require updates to call `RubyVM::MJIT.pause` and `RubyVM::MJIT.resume` at certain places to ensure each test is providing an accurate benchmark. This script may only be useful for long running tests, or may not be useful at all. It will require some deeper understand of how the JIT is implemented and profiling of its effects to have a clearer idea.
+
+
+### Environment
+
+Tested with:
+* MacOS 10.12 
+* bash & zsh shells 
+* Ruby versions 2.3, 2.4, 2.5, 2.6.0-rc1
 
